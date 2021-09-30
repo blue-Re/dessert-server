@@ -38,4 +38,15 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+const mongoose = require('mongoose')
+mongoose.connect('mongodb://localhost/dessert')
+
+const db = mongoose.connection
+db.on('error',()=>{
+  console.log('连接出错了！');
+})
+db.once('open',()=>{
+  console.log('数据库连接成功！');
+})
+
 module.exports = app;
