@@ -8,6 +8,11 @@ const Bests = require('../models/Bests');
 const Focus = require('../models/Focus');
 const BasksModel = require('../models/Bask');
 const NewsModel = require('../models/News');
+const RemarkModel = require('../models/Remark');
+
+// 引入mongoose转换对应的id类型
+const mongoose = require('mongoose');
+
 
 //设置跨域访问
 // router.all('*', function(req, res, next) {
@@ -117,6 +122,34 @@ router.get('/food_key', (req, res) => {
   }
 })
 
+// 对食物进行评论
+router.post('/food_remark', (req, res) => {
+  // 获取参数
+  const { food_id, username, content } = req.body
+  // 修改表中的数据
+  RemarkModel.create( {
+    food_id,
+    username,
+    content,
+    time:Date.now(),
+  }, (err, data) => {
+    if(err) res.send({code:1,msg:'网络错误，请重试！'})
+    console.log(data,err);
+    res.send({code:0,msg:'评论成功!'})
+  })
+})
+
+// 根据父元素的_id去查找对应的评论信息
+router.get('/find_remark_content',(req,res)=>{
+  // 获取参数
+  let food_id = req.query.food_id
+  // 根据食物id去查找相关的评论
+  RemarkModel.find({food_id},(err,data)=>{
+    if(err) res.send({code:1,msg:'网络繁忙，请重试!'})
+    console.log(data);
+    res.send({code:0,data})
+  })
+})
 
 
 // 精品信息
